@@ -16,20 +16,20 @@ public:
 	void obfuscate() {
 		string obfuscatedJSON, normalJSON;
 		readInput(normalJSON);
-		writeOutput(obfuscatedJSON);
+		writeOutput(normalJSON);
 	}
 
 private:
 		string jsonInputPath;
 		string jsonOutputPath;
 
-		void readInput(string normalJSON) {
+		void readInput(string &normalJSON) {
 			ifstream inputFile(jsonInputPath);
 			if (!inputIsOpen(inputFile)) return;
 
 			string line;
-			while (!inputFile.eof()) {
-				getline(inputFile, line);
+			while (getline(inputFile, line)) {
+				normalJSON += line + "\n";
 			}
 		}
 
@@ -66,6 +66,8 @@ int main()
 	cin >> jsonInputPath;
 
 	JSONObfuscator obfuscator(jsonInputPath, jsonOutputPath);
+
+	obfuscator.obfuscate();
 
 	return 0;
 }
