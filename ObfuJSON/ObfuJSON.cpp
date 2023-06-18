@@ -13,11 +13,17 @@ public:
 		this->jsonOutputPath = jsonOutputPath;
 	}
 
+	void obfuscate() {
+		string obfuscatedJSON, normalJSON;
+		readInput(normalJSON);
+		writeOutput(obfuscatedJSON);
+	}
+
 private:
 		string jsonInputPath;
 		string jsonOutputPath;
 
-		void readInput() {
+		void readInput(string normalJSON) {
 			ifstream inputFile(jsonInputPath);
 			if (!inputIsOpen(inputFile)) return;
 
