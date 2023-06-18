@@ -16,7 +16,7 @@ public:
 	void obfuscate() {
 		string obfuscatedJSON, normalJSON;
 		readInput(normalJSON);
-		writeOutput(normalJSON);
+		writeOutput(obfuscatedJSON);
 	}
 
 private:
@@ -48,6 +48,7 @@ private:
 				cerr << "Error opening input file." << endl;
 				return false;
 			}
+			return true;
 		}
 
 		bool outputIsCreated(ofstream& outputFile) {
@@ -55,6 +56,7 @@ private:
 				cerr << "Error creating output file." << endl;
 				return false;
 			}
+			return true;
 		}
 };
 
