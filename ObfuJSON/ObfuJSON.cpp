@@ -4,7 +4,7 @@
 #include <regex>
 #include <sstream>
 #include <iomanip>
-
+#include <map>
 
 using namespace std;
 
@@ -26,7 +26,17 @@ public:
 		writeOutput(obfuscatedJSON);
 	}
 
+	void generateReplacementMap(const string replacementMapPath) {
+		ofstream outputFile(replacementMapPath);
+		if (!outputIsCreated(outputFile)) return;
+
+		writeReplacement(outputFile);
+
+		outputFile.close();
+	}
+
 private:
+		map<string, string> replacementMap;
 		string jsonInputPath;
 		string jsonOutputPath;
 
@@ -48,6 +58,12 @@ private:
 			outputFile.close();
 
 			cout << "Output file created successfully." << endl;
+		}
+
+		void writeReplacement(ofstream& outputFile){
+			for (const auto& i : replacementMap) {
+				outputFile << i.first << " -> " << i.second << endl;
+			}
 		}
 
 		bool inputIsOpen(ifstream& inputFile) {
@@ -78,6 +94,8 @@ private:
 
 		string normalToObfuscatedJSON(const string &normalJSON) {
 			string line, obfuscatedJSON;
+			replacementMap.clear();
+			string originalString, obfuscatedString;
 
 			size_t possition = 0, start=0, end=0;
 
@@ -88,8 +106,13 @@ private:
 					end = normalJSON.find_first_of("\"", start + 1);
 
 					if (end != string::npos) {
+
+						originalString = normalJSON.substr(start + 1, end - start - 1);
+						obfuscatedString = stringToUnicodeEscape(originalString);
+						
 						obfuscatedJSON += normalJSON.substr(possition, start - possition + 1)
-							+ stringToUnicodeEscape(normalJSON.substr(start+1, end - start - 1));
+							+ obfuscatedString;
+						replacementMap[originalString] = obfuscatedString;
 
 						possition = end;
 						continue;
@@ -112,6 +135,7 @@ int main()
 	JSONObfuscator obfuscator(jsonInputPath, jsonOutputPath);
 
 	obfuscator.obfuscate();
+	obfuscator.generateReplacementMap("replacementMap.txt");
 
 	return 0;
 }
